@@ -1,6 +1,7 @@
 import os
 import anthropic
 from typing import List, Dict, Any
+from config.settings import DEFAULT_MODEL
 
 class ClaudeAPI:
     """Wrapper for the Anthropic Claude API."""
@@ -11,8 +12,10 @@ class ClaudeAPI:
         if not api_key:
             raise ValueError("ANTHROPIC_API_KEY environment variable is not set.")
         
+        # Initialize with just the API key, without any additional parameters
+        # that might cause compatibility issues across different versions
         self.client = anthropic.Anthropic(api_key=api_key)
-        self.model = "claude-3-opus-20240229"  # Default model
+        self.model = DEFAULT_MODEL
     
     def set_model(self, model_name: str):
         """Change the model being used."""
