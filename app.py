@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 # Import modules
 from modules.claude_api import ClaudeAPI
 from modules.debate_engine import DebateEngine
-from ui.components import render_debate, render_controls, render_loading_animation
+from ui.components import render_debate, render_controls
 from utils.research import format_research_for_display
 from config.settings import DEBATE_TOPICS
 

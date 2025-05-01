@@ -237,7 +237,3 @@ def reset_debate():
     st.session_state.pro_plan_edited = None
     st.session_state.con_plan_edited = None
     
-def render_loading_animation():
-    """Render a loading animation."""
-    with st.spinner("Claude is thinking..."):
-        # Simulate loading
