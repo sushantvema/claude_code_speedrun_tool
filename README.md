@@ -20,6 +20,67 @@ A minimal Streamlit application that hosts a debate between two instances of Cla
 - Real-time research capabilities using Perplexity Sonar API
 - Citation support for factual claims in debates
 
+## System Architecture
+
+```mermaid
+graph TD
+    %% Main Components
+    User[User/Judge] --> |Selects Topic & Settings| App[Streamlit App]
+    App --> |Renders UI| UI[UI Components]
+    App --> |Manages Debate| DE[Debate Engine]
+    DE --> |API Calls| CAPI[Claude API]
+    DE --> |Research Queries| RC[Research Component]
+    
+    %% Research Flow
+    RC --> |Direct API| PAPI[Perplexity API Client]
+    RC --> |MCP Fallback| PMCP[Perplexity MCP Integration]
+    PAPI --> |Web Search| Web((Internet))
+    PMCP --> |Web Search| Web
+
+    %% Debate Flow
+    subgraph Debate Flow
+        DE --> |Preparation| Stage1[Preparation Phase]
+        Stage1 --> |Plans Approved| Stage2[Opening Statements]
+        Stage2 --> Stage3[First Rebuttal]
+        Stage3 --> Stage4[Second Rebuttal]
+        Stage4 --> Stage5[Closing Statements]
+        Stage5 --> |Complete| Vote[User Voting]
+    end
+
+    %% Two Claude Instances
+    CAPI --> |Pro Arguments| Claude1[Claude Instance 1\nPRO Position]
+    CAPI --> |Con Arguments| Claude2[Claude Instance 2\nCON Position]
+    
+    %% Research Integration
+    subgraph Research Integration
+        RC --> |Pro Research| ProResearch[Pro Side Research]
+        RC --> |Con Research| ConResearch[Con Side Research]
+        ProResearch --> |Citations| Claude1
+        ConResearch --> |Citations| Claude2
+    end
+
+    %% Data Storage
+    Config[Configuration\nSettings.py] --> DE
+    Config --> CAPI
+    Config --> RC
+    
+    %% UI Components
+    UI --> |Displays| DebateUI[Debate Content]
+    UI --> |Shows| ResearchUI[Research Data]
+    UI --> |Controls| ProgressUI[Debate Progress]
+    
+    %% Styling
+    classDef core fill:#f9f,stroke:#333,stroke-width:2px
+    classDef api fill:#bbf,stroke:#333,stroke-width:2px
+    classDef ui fill:#bfb,stroke:#333,stroke-width:2px
+    classDef flow fill:#fbb,stroke:#333,stroke-width:2px
+    
+    class App,DE,RC core
+    class CAPI,PAPI,PMCP,Claude1,Claude2 api
+    class UI,DebateUI,ResearchUI,ProgressUI ui
+    class Stage1,Stage2,Stage3,Stage4,Stage5 flow
+```
+
 ## Getting Started
 
 ### Prerequisites
