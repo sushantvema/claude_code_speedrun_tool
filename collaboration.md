@@ -5,6 +5,7 @@ Your approach of using coding agents like Claude Code along with a shared GitHub
 ## Repository Structure and Branching Strategy
 
 ### Branch Organization
+
 - **`main`**: Production-ready code, protected branch
 - **`develop`**: Integration branch for features
 - **Feature branches**: Individual components (branched from `develop`)
@@ -36,17 +37,20 @@ I recommend dividing the work into distinct, minimally-overlapping components:
 ## Parallel Workflow Plan
 
 ### 1. Initial Setup (Together)
+
 - Create repository structure
 - Define interfaces between components
 - Establish API contracts
 - Set up development environment
 
 ### 2. Parallel Development (Individual)
+
 - Each person takes ownership of different modules
 - Create feature branches for each component
 - Work independently using Claude Code
 
 ### 3. Regular Integration (Coordinated)
+
 - Schedule regular merges to `develop` (2-3 times per week)
 - Conduct code reviews on pull requests
 - Address integration issues together
@@ -54,16 +58,19 @@ I recommend dividing the work into distinct, minimally-overlapping components:
 ## Collaboration Tools and Practices
 
 ### Code Organization
+
 - Define clear module interfaces early
 - Use configuration files for shared constants
 - Create shared utility functions in a common module
 
 ### Documentation
+
 - Document API contracts between components
 - Maintain up-to-date README with setup instructions
 - Use inline comments for complex logic
 
 ### Communication
+
 - Daily quick sync meetings (15 min)
 - Shared Notion/Google Doc for design decisions
 - GitHub issues for task tracking
@@ -73,11 +80,13 @@ I recommend dividing the work into distinct, minimally-overlapping components:
 Here's how you might divide the specific components to work on simultaneously:
 
 ### Developer 1
+
 1. Claude API integration and prompt engineering
 2. Debate state management
 3. Judge/evaluation system
 
 ### Developer 2
+
 1. Streamlit UI implementation
 2. User flow and session management
 3. Data persistence and export features
