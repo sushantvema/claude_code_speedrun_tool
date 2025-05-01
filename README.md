@@ -2,6 +2,14 @@
 
 A minimal Streamlit application that hosts a debate between two instances of Claude, arguing opposite sides of a topic with human judge evaluation.
 
+> *This project was conceived and implemented in two hours at the [First Ever
+> Claude Speedrun Hackathon @ Berkeley](https://lu.ma/4zxa9ash?tk=N05F0U)*
+
+## DEMO LINKS
+
+- [YouTube 7 Minutes](https://youtu.be/avVqaOqdVIo)
+- [DevPost Submission](https://devpost.com/software/claude-vs-claude-ultimate-debate-system)
+
 ## Features
 
 - Select from predefined debate topics or create your own
@@ -23,26 +31,31 @@ A minimal Streamlit application that hosts a debate between two instances of Cla
 ### Installation
 
 1. Clone the repository
+
 ```bash
 git clone https://github.com/yourusername/claude-debate.git
 cd claude-debate
 ```
 
 2. Create a virtual environment
+
 ```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
 3. Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
 4. Set up your environment variables
+
 ```bash
 cp .env.example .env
 ```
+
 Then edit `.env` to add your Anthropic API key and Perplexity API key (if using research features).
 
 ### Running the App
@@ -51,7 +64,7 @@ Then edit `.env` to add your Anthropic API key and Perplexity API key (if using 
 streamlit run app.py
 ```
 
-The app will be available at http://localhost:8501
+The app will be available at <http://localhost:8501>
 
 ## Project Structure
 
@@ -88,3 +101,4 @@ The project uses the following branching strategy for collaborative development:
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
