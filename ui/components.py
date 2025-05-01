@@ -241,4 +241,3 @@ def render_loading_animation():
     """Render a loading animation."""
     with st.spinner("Claude is thinking..."):
         # Simulate loading
-        time.sleep(0.5)

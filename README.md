@@ -9,6 +9,8 @@ A minimal Streamlit application that hosts a debate between two instances of Cla
 - Control debate progression with a turn-based system
 - Vote for the debater you thought presented better arguments
 - Simple and intuitive UI built with Streamlit
+- Real-time research capabilities using Perplexity Sonar API
+- Citation support for factual claims in debates
 
 ## Getting Started
 
@@ -16,6 +18,7 @@ A minimal Streamlit application that hosts a debate between two instances of Cla
 
 - Python 3.8+
 - Anthropic API key
+- Perplexity Sonar API key (optional, for research capabilities)
 
 ### Installation
 
@@ -40,7 +43,7 @@ pip install -r requirements.txt
 ```bash
 cp .env.example .env
 ```
-Then edit `.env` to add your Anthropic API key.
+Then edit `.env` to add your Anthropic API key and Perplexity API key (if using research features).
 
 ### Running the App
 
