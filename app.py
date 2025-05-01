@@ -42,11 +42,17 @@ def initialize_session_state():
     if 'con_personality' not in st.session_state:
         st.session_state.con_personality = ""
     
+    if 'pro_plan_edited' not in st.session_state:
+        st.session_state.pro_plan_edited = None
+    
+    if 'con_plan_edited' not in st.session_state:
+        st.session_state.con_plan_edited = None
+    
     if 'loading' not in st.session_state:
         st.session_state.loading = False
 
 def main():
-    st.title("Claude vs Claude Debate System")
+    st.write("# Claude vs Claude Debate")
     
     # Initialize session state
     initialize_session_state()
@@ -87,6 +93,10 @@ def main():
             # Show loading animation
             with st.spinner("Preparing debate plans..."):
                 topic = custom_topic if custom_topic else DEBATE_TOPICS[selected_topic]
+                
+                # Reset edited plans for the new debate
+                st.session_state.pro_plan_edited = None
+                st.session_state.con_plan_edited = None
                 
                 # Start debate with personalities if provided
                 st.session_state.debate_engine.start_debate(
