@@ -10,7 +10,7 @@ MAX_RESPONSE_LENGTH = 1024
 DEFAULT_TEMPERATURE = 0.7
 
 # Default model
-DEFAULT_MODEL = "claude-3-opus-20240229"
+DEFAULT_MODEL = "claude-3-5-haiku-20241022"
 
 # Predefined debate topics
 DEBATE_TOPICS = {
