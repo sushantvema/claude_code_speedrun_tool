@@ -70,10 +70,10 @@ graph TD
     UI --> |Controls| ProgressUI[Debate Progress]
     
     %% Styling
-    classDef core fill:#f9f,stroke:#333,stroke-width:2px
-    classDef api fill:#bbf,stroke:#333,stroke-width:2px
-    classDef ui fill:#bfb,stroke:#333,stroke-width:2px
-    classDef flow fill:#fbb,stroke:#333,stroke-width:2px
+    classDef core fill:#f9f,stroke:#333,stroke-width:2px,color:#333
+    classDef api fill:#bbf,stroke:#333,stroke-width:2px,color:#333
+    classDef ui fill:#bfb,stroke:#333,stroke-width:2px,color:#333
+    classDef flow fill:#fbb,stroke:#333,stroke-width:2px,color:#333
     
     class App,DE,RC core
     class CAPI,PAPI,PMCP,Claude1,Claude2 api
