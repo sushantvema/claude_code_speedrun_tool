@@ -50,6 +50,31 @@ def render_debate(debate_history: List[Dict[str, str]]):
         # Stage header
         st.markdown(f"## {stage.replace('_', ' ').title()} Stage")
         
+        # Display research if available for this stage
+        if debate_engine.enable_research:
+            with st.expander(f"Research for {stage.replace('_', ' ').title()} Stage"):
+                research_col1, research_col2 = st.columns(2)
+                
+                with research_col1:
+                    st.write("Pro/Yes Research")
+                    pro_research = debate_engine.pro_research.get(stage)
+                    if pro_research and pro_research.get("success", False):
+                        from utils.research import format_research_for_display
+                        pro_research_html = format_research_for_display(pro_research)
+                        st.markdown(pro_research_html, unsafe_allow_html=True)
+                    else:
+                        st.info("No research available for Pro side.")
+                
+                with research_col2:
+                    st.write("Con/No Research")
+                    con_research = debate_engine.con_research.get(stage)
+                    if con_research and con_research.get("success", False):
+                        from utils.research import format_research_for_display
+                        con_research_html = format_research_for_display(con_research)
+                        st.markdown(con_research_html, unsafe_allow_html=True)
+                    else:
+                        st.info("No research available for Con side.")
+        
         pro_message = next((msg for msg in stage_messages if msg.get("perspective") == "pro"), None)
         con_message = next((msg for msg in stage_messages if msg.get("perspective") == "con"), None)
         
@@ -75,6 +100,31 @@ def render_preparation_phase():
     Before the debate begins, both sides have prepared their debate plans. 
     Review these plans and decide if you want to proceed with the debate.
     """)
+    
+    # Display preparation research if available
+    if debate_engine.enable_research:
+        st.subheader("Research Conducted")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.write("Pro/Yes Research")
+            pro_research = debate_engine.pro_research.get("preparation")
+            if pro_research and pro_research.get("success", False):
+                from utils.research import format_research_for_display
+                pro_research_html = format_research_for_display(pro_research)
+                st.markdown(pro_research_html, unsafe_allow_html=True)
+            else:
+                st.info("No research available for Pro side.")
+        
+        with col2:
+            st.write("Con/No Research")
+            con_research = debate_engine.con_research.get("preparation")
+            if con_research and con_research.get("success", False):
+                from utils.research import format_research_for_display
+                con_research_html = format_research_for_display(con_research)
+                st.markdown(con_research_html, unsafe_allow_html=True)
+            else:
+                st.info("No research available for Con side.")
     
     # Display pro plan
     st.subheader("Pro/Yes Plan")

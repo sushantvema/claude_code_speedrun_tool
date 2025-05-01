@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from modules.claude_api import ClaudeAPI
 from modules.debate_engine import DebateEngine
 from ui.components import render_debate, render_controls, render_loading_animation
+from utils.research import format_research_for_display
 from config.settings import DEBATE_TOPICS
 
 # Load environment variables
@@ -67,7 +68,20 @@ def main():
             placeholder="Should cats be allowed to vote?"
         )
         
-        # Personality prompts (stretch goal)
+        # Research settings
+        st.subheader("Research Settings")
+        
+        enable_research = st.checkbox(
+            "Enable Perplexity Research",
+            value=st.session_state.debate_engine.enable_research if hasattr(st.session_state, "debate_engine") else True,
+            help="Use Perplexity Ask MCP to research facts for the debate"
+        )
+        
+        # Update debate engine with research setting if it exists
+        if hasattr(st.session_state, "debate_engine"):
+            st.session_state.debate_engine.set_research_enabled(enable_research)
+        
+        # Personality prompts
         st.subheader("Debater Personalities (Optional)")
         
         st.session_state.pro_personality = st.text_area(

@@ -1,6 +1,7 @@
 from typing import List, Dict, Tuple, Optional
-from config.settings import DEFAULT_ROUNDS, PRO_SYSTEM_PROMPT, CON_SYSTEM_PROMPT
+from config.settings import DEFAULT_ROUNDS, PRO_SYSTEM_PROMPT, CON_SYSTEM_PROMPT, ENABLE_RESEARCH
 from enum import Enum
+import utils.research as research_utils
 
 class DebateStage(Enum):
     """Enum representing the current stage of the debate."""
@@ -20,6 +21,7 @@ class DebateEngine:
     - Turn-taking and rounds
     - Message formatting for Claude API
     - Sequential stage progression
+    - Research integration
     """
     
     def __init__(self, claude_api):
@@ -42,6 +44,11 @@ class DebateEngine:
         # Preparation phase plans
         self.pro_plan = None
         self.con_plan = None
+        
+        # Research data
+        self.enable_research = ENABLE_RESEARCH
+        self.pro_research = {}  # Stores research per stage for pro side
+        self.con_research = {}  # Stores research per stage for con side
     
     def start_debate(self, topic: str, max_rounds: int = DEFAULT_ROUNDS, 
                     pro_personality: str = "", con_personality: str = ""):
@@ -76,7 +83,11 @@ class DebateEngine:
         if not self.debate_active:
             return "Debate is not active.", "Debate is not active."
         
-        # Generate pro side plan
+        # Conduct research if enabled
+        if self.enable_research:
+            self._conduct_research("preparation")
+        
+        # Generate pro side plan with research integration
         pro_plan_prompt = f"""
         You are preparing for a structured debate on the topic: "{self.topic}"
         
@@ -92,6 +103,13 @@ class DebateEngine:
         {self.pro_personality if self.pro_personality else ""}
         """
         
+        # Add research to pro prompt if available
+        pro_research = self.pro_research.get("preparation")
+        if pro_research and pro_research.get("success", False):
+            research_text = self.claude_api._format_research_for_prompt(pro_research)
+            if research_text:
+                pro_plan_prompt += f"\n\nYou have access to the following research that may be useful:\n{research_text}\n\nIncorporate this research into your debate plan where relevant."
+        
         con_plan_prompt = f"""
         You are preparing for a structured debate on the topic: "{self.topic}"
         
@@ -106,6 +124,13 @@ class DebateEngine:
         Keep your plan concise (maximum 300 words).
         {self.con_personality if self.con_personality else ""}
         """
+        
+        # Add research to con prompt if available
+        con_research = self.con_research.get("preparation")
+        if con_research and con_research.get("success", False):
+            research_text = self.claude_api._format_research_for_prompt(con_research)
+            if research_text:
+                con_plan_prompt += f"\n\nYou have access to the following research that may be useful:\n{research_text}\n\nIncorporate this research into your debate plan where relevant."
         
         pro_plan = self.claude_api.generate_response(
             system_prompt="You are a debate coach helping prepare a structured argument.",
@@ -206,6 +231,10 @@ class DebateEngine:
         Returns:
             Pro side's response for the current stage
         """
+        # Conduct research for this stage if enabled
+        if self.enable_research and stage != "preparation":
+            self._conduct_research(stage)
+        
         stage_instructions = self._get_stage_instructions(stage, "pro/yes")
         
         system_prompt = f"""
@@ -225,10 +254,14 @@ class DebateEngine:
         {self.pro_personality if self.pro_personality else ""}
         """
         
+        # Get research for this stage if available
+        research_results = self.pro_research.get(stage)
+        
         return self.claude_api.debate_response(
             scenario=self.topic,
             perspective="pro/yes",
-            history=self._get_formatted_history(stage, "pro")
+            history=self._get_formatted_history(stage, "pro"),
+            research_results=research_results
         )
     
     def _generate_con_response(self, stage: str) -> str:
@@ -260,11 +293,52 @@ class DebateEngine:
         {self.con_personality if self.con_personality else ""}
         """
         
+        # Get research for this stage if available
+        research_results = self.con_research.get(stage)
+        
         return self.claude_api.debate_response(
             scenario=self.topic,
             perspective="con/no",
-            history=self._get_formatted_history(stage, "con")
+            history=self._get_formatted_history(stage, "con"),
+            research_results=research_results
         )
+        
+    def _conduct_research(self, stage: str) -> None:
+        """
+        Conduct research for both pro and con perspectives for the current stage.
+        
+        Args:
+            stage: Current debate stage
+        """
+        if not self.enable_research:
+            return
+            
+        # Generate research queries
+        pro_queries = research_utils.generate_research_queries(
+            topic=self.topic, 
+            stage=stage, 
+            perspective="pro",
+            debate_history=self.debate_messages
+        )
+        
+        con_queries = research_utils.generate_research_queries(
+            topic=self.topic, 
+            stage=stage, 
+            perspective="con",
+            debate_history=self.debate_messages
+        )
+        
+        # Execute research queries
+        pro_research_results = None
+        con_research_results = None
+        
+        if pro_queries:
+            pro_research_results = self.claude_api.research_with_perplexity(pro_queries[0])
+            self.pro_research[stage] = pro_research_results
+            
+        if con_queries:
+            con_research_results = self.claude_api.research_with_perplexity(con_queries[0])
+            self.con_research[stage] = con_research_results
     
     def _get_stage_instructions(self, stage: str, perspective: str) -> str:
         """Get stage-specific instructions for the debater."""
@@ -357,8 +431,20 @@ Now please provide your opening statement based on this plan.
             "is_complete": self.is_debate_complete(),
             "messages": self.debate_messages,
             "pro_plan": self.pro_plan,
-            "con_plan": self.con_plan
+            "con_plan": self.con_plan,
+            "pro_research": self.pro_research,
+            "con_research": self.con_research,
+            "enable_research": self.enable_research
         }
+        
+    def set_research_enabled(self, enabled: bool) -> None:
+        """
+        Enable or disable research capabilities.
+        
+        Args:
+            enabled: Boolean to enable/disable research
+        """
+        self.enable_research = enabled
         
     def get_current_stage(self) -> str:
         """Get the current debate stage."""
